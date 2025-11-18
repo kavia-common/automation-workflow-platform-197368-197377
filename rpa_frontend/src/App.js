@@ -1,47 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './auth/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import AppLayout from './layout/AppLayout';
+
+// Pages
+import Dashboard from './pages/Dashboard';
+import Workflows from './pages/Workflows';
+import WorkflowBuilder from './pages/WorkflowBuilder';
+import Bots from './pages/Bots';
+import Schedules from './pages/Schedules';
+import Executions from './pages/Executions';
+import Users from './pages/Users';
+import Settings from './pages/Settings';
+import Login from './pages/Login';
 
 // PUBLIC_INTERFACE
 function App() {
-  const [theme, setTheme] = useState('light');
-
-  // Effect to apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
-
+  /** Root application component that sets up routing and auth provider. */
   return (
     <div className="App">
-      <header className="App-header">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-        </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/workflows" element={<Workflows />} />
+                <Route path="/workflows/builder" element={<WorkflowBuilder />} />
+                <Route path="/bots" element={<Bots />} />
+                <Route path="/schedules" element={<Schedules />} />
+                <Route path="/executions" element={<Executions />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/settings" element={<Settings />} />
+              </Route>
+            </Route>
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </div>
   );
 }
