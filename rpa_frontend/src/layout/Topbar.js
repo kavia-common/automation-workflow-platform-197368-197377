@@ -1,17 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
 
 // PUBLIC_INTERFACE
 export default function Topbar() {
-  /** Top application bar with actions and account area. */
-  const { logout } = useAuth();
+  /** Top application bar with quick actions; no auth controls in public mode. */
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
-  };
 
   return (
     <header className="topbar" role="banner">
@@ -21,7 +14,6 @@ export default function Topbar() {
       </div>
       <div className="row">
         <button className="btn secondary" onClick={() => navigate('/workflows/builder')}>+ New Workflow</button>
-        <button className="btn" onClick={handleLogout} aria-label="Logout">Logout</button>
       </div>
     </header>
   );
